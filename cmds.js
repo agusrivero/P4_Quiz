@@ -93,7 +93,7 @@ exports.addCmd = rl => {
  */
 exports.deleteCmd = (rl, id) => {
     if (typeof id === "undefined") {
-        errorlog(`Falta el parámetro id.`);
+        errorLog(`Falta el parámetro id.`);
     } else {
         try {
             model.deleteByIndex(id);
@@ -151,8 +151,26 @@ exports.editCmd = (rl, id) => {
  * @param id Clave del quiz a probar.
  */
 exports.testCmd = (rl, id) => {
-    log('Probar el quiz indicado.', 'red');
-    rl.prompt();
+    if (typeof id === "undefined"){
+        errorlog('Falta el parámetro id.');
+        rl.prompt();
+    }try{
+        const quiz = model.getByIndex(id);
+        rl.question(`${quiz.question}: `, answer => {
+            if (answer.toLowerCase() == quiz.answer.toLowerCase()){
+                biglog('correcto', 'green');
+                rl.prompt();
+            }else{
+                biglog('incorrecto', 'red');
+                rl.prompt();
+            }
+        })
+    }catch (error){
+        errorlog(error.message);
+        rl.prompt();
+    }
+    
+
 };
 
 
@@ -163,9 +181,61 @@ exports.testCmd = (rl, id) => {
  * @param rl Objeto readline usado para implementar el CLI.
  */
 exports.playCmd = rl => {
-    log('Jugar.', 'red');
-    rl.prompt();
+    try{
+        const list = this.addQuizzes();
+        log(list[0].question);
+        var score = 0;
+        var i = 0;
+        play();
+        function play(){
+            const answ = list[i].answer;
+            rl.question(colorize(`¿${list[i].question}?: `, 'red'), answer => {
+                if (answer.toLowerCase() == answ.toLowerCase()){
+                    score++;
+                    i++;
+                    log(`CORRECTO - Lleva ${score} aciertos`);
+                    if (score != list.length){
+                        play();  
+                    }else{
+                        log('WINNER!!');
+                        biglog(`${score}`, 'magenta');
+                        rl.prompt();
+                    }     
+                }else{
+                    log('INCORRECTO');
+                    biglog(`${score}`, 'magenta');
+                    rl.prompt();
+                }
+            });
+        }   
+    }catch(error){
+        errorlog(error.message);
+        rl.prompt();
+    }
 };
+
+
+this.addQuizzes = function(){
+    const quizLength = model.count();
+    var list = [];
+    var quizList = [];
+    while(list.length < quizLength){
+        var random = Math.floor(Math.random() * quizLength);
+        var exist = false;
+        for(var i = 0; i<list.length; i++){
+            if (list[i] == random){
+                exist = true;
+                break;
+            }
+        }
+        if (!exist){
+            list.push(random);
+            quizList.push(model.getByIndex(random)); 
+        }
+
+    }
+    return quizList;  
+}
 
 
 /**

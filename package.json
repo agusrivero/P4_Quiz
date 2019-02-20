@@ -1,5 +1,5 @@
 {
-  "name": "quiz",
+  "name": "core",
   "version": "1.0.0",
   "description": "Practica Quiz",
   "main": "main.js",
@@ -23,5 +23,17 @@
     "chai": "^4.1.2",
     "chalk": "^2.3.0",
     "figlet": "^1.2.0"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/practicas-ging/CORE19-03_quiz_cmd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/practicas-ging/CORE19-03_quiz_cmd/issues"
+  },
+  "homepage": "https://github.com/practicas-ging/CORE19-03_quiz_cmd#readme"
 }
